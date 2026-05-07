@@ -1,0 +1,540 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+/* Prihlasovacia obrazovka */
+.login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.login-screen h2 {
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+.login-screen input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 250px;
+}
+
+.login-screen button,
+#connectBtn,
+.header button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.login-screen button:hover,
+#connectBtn:hover,
+.header button:hover {
+    background-color: #0056b3;
+}
+
+/* Hlavný kontajner aplikácie */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+
+/* ŠTÝL PRE KONTAJNER AKCIÍ V HLAVIČKE */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap; /* Pridané pre lepšie zalomenie na menších obrazovkách */
+    justify-content: flex-end; /* Zarovnanie doprava */
+}
+
+#userInfo {
+    font-weight: bold;
+    color: #555;
+}
+
+.controls {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.radio-group {
+    margin-bottom: 10px;
+}
+
+.radio-group label {
+    margin-right: 15px;
+    font-weight: normal;
+}
+
+#mode-description {
+    font-style: italic;
+    color: #666;
+    margin-top: 10px;
+    padding: 0 10px;
+}
+
+.main-content {
+    display: flex;
+    flex-grow: 1;
+}
+
+/* Paleta zariadení - PRISPÔSOBENÉ PRE KATEGÓRIE */
+.device-palette {
+    width: 220px; /* Šírka palety */
+    padding: 15px;
+    border-right: 1px solid #eee;
+    background-color: #f5f5f5;
+    display: block; /* ZMENENÉ z 'flex' na 'block' pre vertikálne kategórie */
+    /* Odstránené align-items: center; a gap: 10px; z tejto úrovne */
+    height: 100%; /* Zaberá celú dostupnú výšku rodičovského flex kontajnera */
+    overflow-y: auto; /* Pridá vertikálne posuvníky, ak obsah presiahne výšku */
+    box-sizing: border-box; /* Zahrnie padding do výpočtu šírky/výšky */
+}
+
+.device-palette h3 {
+    margin-top: 0;
+    color: #444;
+    text-align: center; /* Vycentrovať nadpis palety */
+    margin-bottom: 10px; /* Medzera pod nadpisom */
+}
+
+/* NOVÉ ŠTÝLY PRE HLAVIČKY KATEGÓRIÍ (ACCORDION HEADER) */
+.category-header {
+    background-color: #e0e0e0;
+    padding: 10px 15px;
+    margin-top: 8px; /* Medzera medzi kategóriami */
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    color: #444;
+    transition: background-color 0.3s ease;
+    border: 1px solid #d0d0d0;
+}
+
+.category-header:hover {
+    background-color: #d0d0d0;
+}
+
+/* Šípka indikujúca stav rozbalenia/zbalenia */
+.category-header .arrow {
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+    transform: rotate(0deg); /* Predvolene smeruje doprava (zbalené) */
+}
+
+.category-header.expanded .arrow {
+    transform: rotate(90deg); /* Otočí sa o 90 stupňov (rozbalené) */
+}
+
+/* NOVÉ ŠTÝLY PRE OBSAH KATEGÓRIÍ (ACCORDION CONTENT) */
+.category-content {
+    max-height: 0; /* Predvolene zbalené */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out; /* Plynulá animácia */
+    background-color: #f9f9f9;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    padding: 0 10px; /* Počiatočné padding: 0 */
+    display: flex; /* Aby sa položky v kategórii zarovnávali vedľa seba */
+    flex-wrap: wrap; /* Položky sa zalomia na nový riadok */
+    gap: 10px; /* Medzera medzi položkami */
+    justify-content: center; /* Vycentruje položky v riadku */
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #d0d0d0;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.category-content.expanded {
+    max-height: 9999px; /* Dostatočne veľká hodnota na zobrazenie všetkých položiek, prípadne prispôsobiť */
+    padding: 10px; /* Pridá padding pri rozbalení */
+}
+
+/* ŠTÝLY PRE JEDNOTLIVÉ PALETTE-ITEM V KATEGÓRIÁCH */
+.palette-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: grab;
+    width: 80px; /* Upravená šírka pre viac položiek v riadku */
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.1s ease-in-out;
+    flex-shrink: 0; /* Zabraňuje scvrkávaniu položiek */
+}
+
+.palette-item:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.02);
+}
+
+.palette-item img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 5px;
+}
+
+.palette-item span {
+    font-size: 0.8em; /* Upravená veľkosť písma pre krátke názvy */
+    color: #333;
+}
+
+/* Pracovná plocha */
+.workspace {
+    flex-grow: 1;
+    border: 2px dashed #ccc;
+    background-color: #e9ecef;
+    position: relative;
+    min-height: 500px;
+    overflow: auto; /* ZMENA: Umožní posúvanie obsahu */
+}
+
+/* Štýlovanie zariadení */
+.device {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    cursor: grab;
+    z-index: 1;
+    user-select: none;
+}
+
+.device.dragging {
+    opacity: 0.7;
+    cursor: grabbing;
+}
+
+.device-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.device-inner img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    object-fit: contain;
+    padding: 10px;
+}
+
+/* Štýly pre režim kreslenia čiar */
+.device.highlight-for-line {
+    outline: 3px solid #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.7);
+}
+
+.workspace.line-drawing-cursor {
+    cursor: crosshair;
+}
+
+.instruction-text {
+    font-style: italic;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* ŠTÝLY PRE KONTEXTOVÉ MENU */
+.context-menu {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    padding: 5px 0;
+    z-index: 1000;
+    list-style: none;
+    margin: 0;
+    cursor: default;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.context-menu-item {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    color: #333;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.context-menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Vyššie ako ostatné elementy */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #007bff;
+    margin-bottom: 25px;
+}
+
+.line-type-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.line-type-btn {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    text-align: left;
+}
+
+.line-type-btn:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.line-preview {
+    width: 60px;
+    height: 2px;
+    border-radius: 1px;
+}
+
+/* Specific Line Previews */
+.optical-preview {
+    background-color: gold; /* Použitie 'gold' pre lepšiu viditeľnosť ako 'yellow' */
+}
+
+.telephone-preview {
+    background-color: black;
+}
+
+.ethernet-preview {
+    background-color: blue;
+}
+
+.wifi-preview {
+    background-color: green;
+    background-image: linear-gradient(to right, green 50%, transparent 50%);
+    background-size: 10px 2px; /* Dĺžka čiarky a medzery */
+}
+
+.mobile-preview {
+    background-color: green;
+    background-image: radial-gradient(circle at center, green 1px, transparent 1px);
+    background-size: 5px 2px; /* Veľkosť bodky a medzery */
+}
+.DECT-preview {
+    background-color: orange;
+    background-image: radial-gradient(circle at center, orange 1px, transparent 1px);
+    background-size: 20px 10px; /* Veľkosť bodky a medzery */
+}
+.modal-close-btn {
+    padding: 10px 20px;
+    background-color: #dc3545; /* Červená pre zrušenie */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.modal-close-btn:hover {
+    background-color: #c82333;
+}
+
+/* ŠTÝL PRE NOVÉ TLAČIDLO "Vypnúť spájanie" */
+#disableConnectBtn {
+    background-color: #dc3545; /* Červená farba */
+    margin-left: 5px; /* Trochu medzera od ostatných tlačidiel */
+}
+
+#disableConnectBtn:hover {
+    background-color: #c82333;
+}
+
+/* Specific styles for the Device Description Modal */
+.device-desc-modal-content {
+    max-width: 600px; /* Adjust as needed */
+    text-align: left; /* Make text readable */
+    position: relative; /* For absolute positioning of close button */
+    padding: 30px 40px; /* More padding */
+}
+
+.device-desc-modal-content .modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #888;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1; /* For better 'X' centering */
+}
+
+.device-desc-modal-content .modal-close-btn:hover {
+    color: #333;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+}
+
+.device-desc-image {
+    max-width: 100px; /* Smaller image in modal */
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto; /* Centered, with space below */
+}
+
+.device-desc-modal-content h3 {
+    margin-top: 0;
+    color: #007bff;
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+
+.device-desc-modal-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+    max-height: 300px; /* Max height for description */
+    overflow-y: auto; /* Scroll if content overflows */
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+/* Dropdown Button */
+.dropbtn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-left: 5px; /* Add some space if needed */
+}
+
+.dropbtn:hover {
+    background-color: #0056b3;
+}
+
+/* The container <div> - required for positioning the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000; /* Ensure it's above other elements */
+    border-radius: 4px;
+    overflow: hidden;
+    right: 0; /* Align to the right of its parent dropdown */
+    top: 100%; /* Position below the button */
+    margin-top: 5px; /* Small space below button */
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.95em;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #e0e0e0;
+}

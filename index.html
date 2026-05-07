@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workplace Simulátor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div id="login" class="login-screen">
+        <h2>Zapojenie/Technológie</h2>
+        <input type="text" id="username" placeholder="Zadajte meno">
+        <button onclick="login()">Prihlásiť sa</button>
+    </div>
+
+    <div id="app-container" class="app-container" style="display: none;">
+        <div class="header">
+            <span id="userInfo"></span>
+            <div class="header-actions">
+                <button onclick="takeScreenshot()">Uložiť obrázok schémy</button>
+                <button id="connectBtn" onclick="toggleLineDrawingMode()">Spojiť zariadenia</button>
+                <button id="disableConnectBtn" onclick="disableLineDrawingMode()" style="display:none;">Vypnúť spájanie</button>
+                <span id="line-drawing-instruction" class="instruction-text"></span>
+                <button id="checkSolutionBtn" onclick="checkSolution()" style="display:none;">Skontrolovať riešenie</button>
+                <button onclick="clearWorkspace()">Vymazať plochu</button>
+
+                <!-- Pôvodná sekcia pre Ukážky zapojenia (prípadne premenovaná) -->
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="toggleExamplesMenu()">Ukážky zapojenia</button>
+                    <div id="example-menu" class="dropdown-content">
+                        <a href="#" onclick="loadExample('bridgeMode')">Bridge Mode (GPON)</a>
+                        <a href="#" onclick="loadExample('bridgeModeVDSL')">Bridge Mode (VDSL)</a>
+                        <a href="#" onclick="loadExample('fullMode')">Full Mode (VDSL)</a>
+                        <a href="#" onclick="loadExample('ExtracisloVDSL')">Extra číslo (VDSL)</a>
+                        <a href="#" onclick="loadExample('ExtracisloGPON')">Extra číslo (GPON)</a>
+                        <!-- Sem môžete pridávať ďalšie ukážky -->
+                    </div>
+                </div>
+
+                <!-- NOVÁ SEKCIA: Tlačidlo a menu "Ukážky Topológií" -->
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="toggleTopologyExamplesMenu()">Ukážky Topológií</button>
+                    <div id="topology-example-menu" class="dropdown-content">
+                        <a href="#" onclick="loadTopologyExample('busTopology')">Zbernicová topológia (BUS)</a>
+                        <a href="#" onclick="loadTopologyExample('starTopology')">Hviezdicova topologia(STAR)</a>
+                        <a href="#" onclick="loadTopologyExample('ringTopology')">Kruhová topologia(RING)</a>
+                        <a href="#" onclick="loadTopologyExample('meshTopology')">Kompletná topológia ( Complete, Mesh)</a>
+                        <!-- Sem budete pridávať ďalšie topológie -->
+                    </div>
+                </div>
+                <!-- KONIEC NOVEJ SEKCIE -->
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="radio-group">
+                <label>Vyberte režim:</label>
+                <input type="radio" id="modeFree" name="appMode" value="free" onchange="selectMode(this.value)">
+                <label for="modeFree">Voľná tvorba</label>
+                <p><label>Úlohy:</label>
+                <input type="radio" id="modeGPON" name="appMode" value="gpon" onchange="selectMode(this.value)">
+                <label for="modeGPON">GPON</label>
+                <input type="radio" id="modeVDSL" name="appMode" value="vdsl" onchange="selectMode(this.value)">
+                <label for="modeVDSL">VDSL</label>
+                <input type="radio" id="modeFWA" name="appMode" value="fwa" onchange="selectMode(this.value)">
+                <label for="modeFWA">FWA</label></p>
+            </div>
+            <p id="mode-description"></p>
+        </div>
+
+        <div class="main-content">
+            <div id="device-palette" class="device-palette">
+                <h3>Paleta zariadení</h3>
+            </div>
+            <div id="workspace" class="workspace">
+                <svg id="line-svg-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"></svg>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-context-menu" class="context-menu" style="display:none;">
+        <div class="context-menu-item" id="delete-device-context">Vymazať zariadenie</div>
+        <div class="context-menu-item" id="delete-line-context" style="display:none;">Vymazať spojenie</div>
+    </div>
+
+    <div id="line-type-selection-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Vyberte typ spojenia:</h3>
+            <div class="line-type-options">
+                <button class="line-type-btn" data-type="optical">
+                    <div class="line-preview optical-preview"></div>
+                    Optický kábel (Žltá, neprerušovaná)
+                </button>
+                <button class="line-type-btn" data-type="telephone">
+                    <div class="line-preview telephone-preview"></div>
+                    Telefónny kábel (Čierna, neprerušovaná)
+                </button>
+                <button class="line-type-btn" data-type="ethernet">
+                    <div class="line-preview ethernet-preview"></div>
+                    Ethernet kábel (Modrá, neprerušovaná)
+                </button>
+                <button class="line-type-btn" data-type="wifi">
+                    <div class="line-preview wifi-preview"></div>
+                    Wi-Fi signál (Zelená, prerušovaná)
+                </button>
+                <button class="line-type-btn" data-type="mobile">
+                    <div class="line-preview mobile-preview"></div>
+                    Mobilný signál (Zelená, bodkovaná)
+                </button>
+				<button class="line-type-btn" data-type="DECT">
+                    <div class="line-preview DECT-preview"></div>
+                    DECT signál (Oranžová, bodkovaná)
+                </button>
+            </div>
+            <button class="modal-close-btn" onclick="cancelLineTypeSelection()">Zrušiť</button>
+        </div>
+    </div>
+
+    <div id="device-description-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content device-desc-modal-content">
+            <button class="modal-close-btn" onclick="hideDeviceDescriptionModal()">X</button>
+            <img id="device-desc-image" src="" alt="Device Image" class="device-desc-image">
+            <h3 id="device-desc-title"></h3>
+            <p id="device-desc-text"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
